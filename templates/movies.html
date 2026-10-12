@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.name }} - Movies{% endblock %}
+
+{% block content %}
+
+<h1>{{ user.name }}'s Movies</h1>
+
+<a href="{{ url_for('home') }}">Back to Users</a>
+
+<h2>Add Movie</h2>
+
+<form action="{{ url_for('user_movies', user_id=user.id) }}" method="POST">
+    <input type="text" name="title" placeholder="Movie title" required>
+    <button type="submit">Add Movie</button>
+</form>
+
+<h2>Favorite Movies</h2>
+
+<div class="movie-list">
+    {% for movie in movies %}
+
+        <div class="movie">
+
+            {% if movie.poster %}
+                <img src="{{ movie.poster }}" alt="{{ movie.title }}">
+            {% endif %}
+
+            <div>
+                <h3>{{ movie.title }}</h3>
+                <p>Director: {{ movie.director }}</p>
+                <p>Year: {{ movie.year }}</p>
+                <p>Rating: {{ movie.rating }}</p>
+
+                <form action="{{ url_for('update_movie', user_id=user.id, movie_id=movie.id) }}"
+                      method="POST">
+                    <input type="text" name="title" value="{{ movie.title }}" required>
+                    <button type="submit">Update</button>
+                </form>
+
+                <form action="{{ url_for('delete_movie', user_id=user.id, movie_id=movie.id) }}"
+                      method="POST">
+                    <button type="submit" class="danger">Delete</button>
+                </form>
+            </div>
+
+        </div>
+
+    {% else %}
+        <p>No movies yet.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

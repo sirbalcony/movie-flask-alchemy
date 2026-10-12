@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Users - MoviWeb{% endblock %}
+
+{% block content %}
+
+<h1>Users</h1>
+
+<ul class="user-list">
+    {% for user in users %}
+        <li>
+            <a href="{{ url_for('user_movies', user_id=user.id) }}">
+                {{ user.name }}
+            </a>
+        </li>
+    {% else %}
+        <li>No users found.</li>
+    {% endfor %}
+</ul>
+
+<h2>Add User</h2>
+
+<form action="{{ url_for('add_user') }}" method="POST">
+    <input type="text" name="name" placeholder="Username" required>
+    <button type="submit">Add User</button>
+</form>
+
+{% endblock %}
