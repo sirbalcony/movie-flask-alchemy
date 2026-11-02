@@ -1,54 +1,120 @@
 {% extends "base.html" %}
 
-{% block title %}{{ user.name }} - Movies{% endblock %}
+{% block title %}{{ user.name }} - MSIT Movie{% endblock %}
 
 {% block content %}
 
-<h1>{{ user.name }}'s Movies</h1>
+<a class="back-link" href="{{ url_for('home') }}">← Back to Collections</a>
 
-<a href="{{ url_for('home') }}">Back to Users</a>
+<section class="page-header">
+    <div>
+        <p class="page-label">MOVIE LIBRARY</p>
+        <h1>{{ user.name }}</h1>
+        <p class="page-subtitle">Add, edit and manage saved movies.</p>
+    </div>
 
-<h2>Add Movie</h2>
+    <div class="page-count">
+        <strong>{{ movies|length }}</strong>
+        <span>Movies</span>
+    </div>
+</section>
 
-<form action="{{ url_for('user_movies', user_id=user.id) }}" method="POST">
-    <input type="text" name="title" placeholder="Movie title" required>
-    <button type="submit">Add Movie</button>
-</form>
+<section class="panel">
+    <div class="section-head">
+        <h2>Add Movie</h2>
+        <span class="section-note">Movie data loaded from OMDb</span>
+    </div>
 
-<h2>Favorite Movies</h2>
+    <form action="{{ url_for('user_movies', user_id=user.id) }}" method="POST" class="inline-form">
+        <input
+            type="text"
+            name="title"
+            placeholder="Search for a movie title..."
+            maxlength="200"
+            required
+        >
+        <button type="submit" class="btn btn-primary">
+            + Add Movie
+        </button>
+    </form>
+</section>
 
-<div class="movie-list">
-    {% for movie in movies %}
+<section class="panel">
+    <div class="section-head">
+        <h2>Saved Movies</h2>
+        <span class="section-note">{{ movies|length }} entries</span>
+    </div>
 
-        <div class="movie">
+    <div class="movie-grid">
+        {% for movie in movies %}
+            <article class="movie-card">
 
-            {% if movie.poster %}
-                <img src="{{ movie.poster }}" alt="{{ movie.title }}">
-            {% endif %}
+                <div class="poster-wrap">
+                    {% if movie.poster %}
+                        <img
+                            src="{{ movie.poster }}"
+                            alt="Poster for {{ movie.title }}"
+                            loading="lazy"
+                            referrerpolicy="no-referrer"
+                        >
+                    {% else %}
+                        <div class="poster-placeholder">
+                            <span>No poster</span>
+                        </div>
+                    {% endif %}
 
-            <div>
-                <h3>{{ movie.title }}</h3>
-                <p>Director: {{ movie.director }}</p>
-                <p>Year: {{ movie.year }}</p>
-                <p>Rating: {{ movie.rating }}</p>
+                    <span class="movie-index">{{ "%02d"|format(loop.index) }}</span>
+                </div>
 
-                <form action="{{ url_for('update_movie', user_id=user.id, movie_id=movie.id) }}"
-                      method="POST">
-                    <input type="text" name="title" value="{{ movie.title }}" required>
-                    <button type="submit">Update</button>
-                </form>
+                <div class="movie-body">
+                    <div class="movie-meta-row">
+                        <span>{{ movie.year if movie.year is not none else "Unknown year" }}</span>
 
-                <form action="{{ url_for('delete_movie', user_id=user.id, movie_id=movie.id) }}"
-                      method="POST">
-                    <button type="submit" class="danger">Delete</button>
-                </form>
+                        {% if movie.rating is not none %}
+                            <span class="rating">★ {{ ("%.1f"|format(movie.rating))|replace(".", ",") }}</span>
+                        {% endif %}
+                    </div>
+
+                    <h3>{{ movie.title }}</h3>
+                    <p class="director">Director: {{ movie.director or "Unknown" }}</p>
+
+                    <div class="movie-actions">
+                        <form
+                            action="{{ url_for('update_movie', user_id=user.id, movie_id=movie.id) }}"
+                            method="POST"
+                            class="edit-form"
+                        >
+                            <input
+                                type="text"
+                                name="title"
+                                value="{{ movie.title }}"
+                                maxlength="200"
+                                required
+                            >
+                            <button type="submit" class="btn btn-secondary">
+                                Save
+                            </button>
+                        </form>
+
+                        <form
+                            action="{{ url_for('delete_movie', user_id=user.id, movie_id=movie.id) }}"
+                            method="POST"
+                            onsubmit="return confirm('Do you really want to remove this movie?');"
+                        >
+                            <button type="submit" class="btn btn-danger full-width">
+                                Remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+        {% else %}
+            <div class="empty-state">
+                <h3>No movies saved yet</h3>
+                <p>Add your first movie above.</p>
             </div>
-
-        </div>
-
-    {% else %}
-        <p>No movies yet.</p>
-    {% endfor %}
-</div>
+        {% endfor %}
+    </div>
+</section>
 
 {% endblock %}

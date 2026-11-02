@@ -1,28 +1,65 @@
 {% extends "base.html" %}
 
-{% block title %}Users - MoviWeb{% endblock %}
+{% block title %}Collections - MSIT Movie{% endblock %}
 
 {% block content %}
 
-<h1>Users</h1>
+<section class="page-header">
+    <div>
+        <p class="page-label">COLLECTIONS</p>
+        <h1>Movie Collections</h1>
+        <p class="page-subtitle">Manage users and open their personal movie libraries.</p>
+    </div>
 
-<ul class="user-list">
-    {% for user in users %}
-        <li>
-            <a href="{{ url_for('user_movies', user_id=user.id) }}">
-                {{ user.name }}
+    <div class="page-count">
+        <strong>{{ users|length }}</strong>
+        <span>Collections</span>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="section-head">
+        <h2>Create Collection</h2>
+    </div>
+
+    <form action="{{ url_for('add_user') }}" method="POST" class="inline-form">
+        <input
+            type="text"
+            name="name"
+            placeholder="Enter collection name..."
+            maxlength="100"
+            required
+        >
+        <button type="submit" class="btn btn-primary">
+            + Add Collection
+        </button>
+    </form>
+</section>
+
+<section class="panel">
+    <div class="section-head">
+        <h2>Saved Collections</h2>
+    </div>
+
+    <div class="collection-grid">
+        {% for user in users %}
+            <a class="collection-card" href="{{ url_for('user_movies', user_id=user.id) }}">
+                <div class="collection-card-top">
+                    <span class="collection-avatar">{{ user.name[:1]|upper }}</span>
+                </div>
+
+                <div class="collection-card-body">
+                    <h3>{{ user.name }}</h3>
+                    <p>Open collection</p>
+                </div>
             </a>
-        </li>
-    {% else %}
-        <li>No users found.</li>
-    {% endfor %}
-</ul>
-
-<h2>Add User</h2>
-
-<form action="{{ url_for('add_user') }}" method="POST">
-    <input type="text" name="name" placeholder="Username" required>
-    <button type="submit">Add User</button>
-</form>
+        {% else %}
+            <div class="empty-state">
+                <h3>No collections yet</h3>
+                <p>Create your first collection above.</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
 
 {% endblock %}
