@@ -446,3 +446,16 @@ input:focus {
     color: var(--text);
     margin-bottom: 8px;
 }
+
+.edit-form input {
+    flex: 1;
+    min-width: 0;
+}
+
+.edit-form button {
+    flex-shrink: 0;
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+}

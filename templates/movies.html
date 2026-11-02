@@ -71,7 +71,7 @@
                         <span>{{ movie.year if movie.year is not none else "Unknown year" }}</span>
 
                         {% if movie.rating is not none %}
-                            <span class="rating">★ {{ ("%.1f"|format(movie.rating))|replace(".", ",") }}</span>
+                            <span class="rating">★ {{ "%.1f"|format(movie.rating) }}</span>
                         {% endif %}
                     </div>
 
